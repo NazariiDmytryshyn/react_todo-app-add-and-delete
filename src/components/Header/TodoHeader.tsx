@@ -1,4 +1,3 @@
-import React, { useEffect, useRef } from 'react';
 import { Todo } from '../../types/Todo';
 import cn from 'classnames';
 
@@ -9,6 +8,7 @@ interface TodoHeaderProps {
   addTodo: (event: React.FormEvent<HTMLFormElement>, title: string) => void;
   isLoading: boolean;
   todos: Todo[];
+  inputRef: React.RefObject<HTMLInputElement>;
 }
 
 export const TodoHeader: React.FC<TodoHeaderProps> = ({
@@ -17,15 +17,8 @@ export const TodoHeader: React.FC<TodoHeaderProps> = ({
   addTodo,
   isLoading,
   todos,
+  inputRef,
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, []);
-
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const todoTitle = event.target.value;
 

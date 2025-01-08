@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { UserWarning } from './UserWarning';
 import { TodoList } from './components/TodoList/TodoList';
 import { TodoFooter } from './components/Footer/TodoFooter';
@@ -30,6 +30,8 @@ export const App: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     getTodos()
       .then(todosFromServer => setTodos(todosFromServer))
@@ -38,6 +40,12 @@ export const App: React.FC = () => {
         throw err;
       });
   }, []);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [todos]);
 
   const filterTodos = (filterType: string, todoList: Todo[]) => {
     switch (filterType) {
@@ -78,6 +86,8 @@ export const App: React.FC = () => {
       const todo = await createTodo(title);
 
       setTodos([...todos, todo]);
+
+      setNewTodoTitle('');
     } catch (error) {
       setErrorMessage(ErrorMessage.Add);
     } finally {
@@ -85,7 +95,6 @@ export const App: React.FC = () => {
         getTodos();
       }, 300);
       setIsLoading(false);
-      setNewTodoTitle('');
       setTodoTemp(null);
     }
   };
@@ -140,6 +149,7 @@ export const App: React.FC = () => {
             addTodo={addTodo}
             isLoading={isLoading}
             todos={todos}
+            inputRef={inputRef}
           />
           <section className="todoapp__main" data-cy="TodoList">
             <TodoList
@@ -147,6 +157,7 @@ export const App: React.FC = () => {
               deleteTodo={deleteTodoFunc}
               todoTemp={todoTemp}
               todoId={todoId}
+              inputRef={inputRef}
             />
           </section>
           {todos.length !== 0 && (

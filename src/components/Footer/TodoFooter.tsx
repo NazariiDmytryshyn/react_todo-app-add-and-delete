@@ -1,16 +1,23 @@
 import React from 'react';
+import { Todo } from '../../types/Todo';
 
 interface TodoFilterProps {
   todoLength: number;
   setFilter: (filter: string) => void;
-  filter: string;
+  filterType: string;
+  deleteCompletedTodos: () => void;
+  todos: Todo[];
 }
 
 export const TodoFooter: React.FC<TodoFilterProps> = ({
   todoLength,
   setFilter,
-  filter,
+  filterType,
+  deleteCompletedTodos,
+  todos,
 }) => {
+  const completedTodoExist = todos.some(todo => todo.completed);
+
   return (
     // /* Hide the footer if there are no todos */
     <footer className="todoapp__footer" data-cy="Footer">
@@ -22,7 +29,7 @@ export const TodoFooter: React.FC<TodoFilterProps> = ({
       <nav className="filter" data-cy="Filter">
         <a
           href="#/"
-          className={`filter__link ${filter === 'All' ? 'selected' : ''}`}
+          className={`filter__link ${filterType === 'All' ? 'selected' : ''}`}
           data-cy="FilterLinkAll"
           onClick={() => setFilter('All')}
         >
@@ -31,7 +38,7 @@ export const TodoFooter: React.FC<TodoFilterProps> = ({
 
         <a
           href="#/active"
-          className={`filter__link ${filter === 'Active' ? 'selected' : ''}`}
+          className={`filter__link ${filterType === 'Active' ? 'selected' : ''}`}
           data-cy="FilterLinkActive"
           onClick={() => setFilter('Active')}
         >
@@ -40,21 +47,23 @@ export const TodoFooter: React.FC<TodoFilterProps> = ({
 
         <a
           href="#/completed"
-          className={`filter__link ${filter === 'Completed' ? 'selected' : ''}`}
+          className={`filter__link ${filterType === 'Completed' ? 'selected' : ''}`}
           data-cy="FilterLinkCompleted"
           onClick={() => setFilter('Completed')}
         >
           Completed
         </a>
       </nav>
-
-      <button
-        type="button"
-        className="todoapp__clear-completed"
-        data-cy="ClearCompletedButton"
-      >
-        Clear completed
-      </button>
+      {completedTodoExist && (
+        <button
+          type="button"
+          className="todoapp__clear-completed"
+          data-cy="ClearCompletedButton"
+          onClick={() => deleteCompletedTodos()}
+        >
+          Clear completed
+        </button>
+      )}
     </footer>
   );
 };

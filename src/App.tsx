@@ -39,12 +39,6 @@ export const App: React.FC = () => {
       });
   }, []);
 
-  // useEffect(() => {
-  //   if (inputRef.current) {
-  //     inputRef.current.focus();
-  //   }
-  // }, [todos]);
-
   const focusField = () => {
     setTimeout(() => {
       const inputField =

@@ -8,14 +8,12 @@ interface TodoItemProps {
   todo: Todo;
   deleteTodo: (id: number) => void;
   todoId: number | null;
-  inputRef: React.RefObject<HTMLInputElement>;
 }
 
 export const TodoItem: React.FC<TodoItemProps> = ({
   todo,
   deleteTodo,
   todoId,
-  inputRef,
 }) => {
   return (
     <div data-cy="Todo" className={cn('todo', todo.completed && 'completed')}>

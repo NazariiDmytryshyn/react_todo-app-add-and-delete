@@ -54,16 +54,15 @@ export const TodoFooter: React.FC<TodoFilterProps> = ({
           Completed
         </a>
       </nav>
-      {completedTodoExist && (
-        <button
-          type="button"
-          className="todoapp__clear-completed"
-          data-cy="ClearCompletedButton"
-          onClick={() => deleteCompletedTodos()}
-        >
-          Clear completed
-        </button>
-      )}
+      <button
+        type="button"
+        className="todoapp__clear-completed"
+        data-cy="ClearCompletedButton"
+        onClick={() => deleteCompletedTodos()}
+        disabled={!completedTodoExist}
+      >
+        Clear completed
+      </button>
     </footer>
   );
 };

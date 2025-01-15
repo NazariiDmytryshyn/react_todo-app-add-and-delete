@@ -8,7 +8,6 @@ interface TodoHeaderProps {
   addTodo: (event: React.FormEvent<HTMLFormElement>, title: string) => void;
   isLoading: boolean;
   todos: Todo[];
-  inputRef: React.RefObject<HTMLInputElement>;
 }
 
 export const TodoHeader: React.FC<TodoHeaderProps> = ({
@@ -17,7 +16,6 @@ export const TodoHeader: React.FC<TodoHeaderProps> = ({
   addTodo,
   isLoading,
   todos,
-  inputRef,
 }) => {
   const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const todoTitle = event.target.value;
@@ -41,10 +39,10 @@ export const TodoHeader: React.FC<TodoHeaderProps> = ({
           type="text"
           className="todoapp__new-todo"
           placeholder="What needs to be done?"
-          ref={inputRef}
           value={newTodoTitle}
           onChange={handleInput}
           disabled={isLoading}
+          autoFocus
         />
       </form>
     </header>

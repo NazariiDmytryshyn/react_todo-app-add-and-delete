@@ -10,7 +10,6 @@ interface TodoListProps {
   deleteTodo: (id: number) => void;
   todoTemp: Todo | null;
   todoId: number | null;
-  inputRef: React.RefObject<HTMLInputElement>;
 }
 
 export const TodoList: React.FC<TodoListProps> = ({
@@ -18,7 +17,6 @@ export const TodoList: React.FC<TodoListProps> = ({
   deleteTodo,
   todoTemp,
   todoId,
-  inputRef,
 }) => {
   return (
     <section className="todoapp__main" data-cy="TodoList">
@@ -30,7 +28,6 @@ export const TodoList: React.FC<TodoListProps> = ({
               key={todo.id}
               deleteTodo={deleteTodo}
               todoId={todoId}
-              inputRef={inputRef}
             />
           </CSSTransition>
         ))}

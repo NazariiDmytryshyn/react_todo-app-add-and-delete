@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserWarning } from './UserWarning';
 import { TodoList } from './components/TodoList/TodoList';
 import { TodoFooter } from './components/Footer/TodoFooter';
@@ -30,8 +30,6 @@ export const App: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
     getTodos()
       .then(todosFromServer => setTodos(todosFromServer))
@@ -41,11 +39,20 @@ export const App: React.FC = () => {
       });
   }, []);
 
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [todos]);
+  // useEffect(() => {
+  //   if (inputRef.current) {
+  //     inputRef.current.focus();
+  //   }
+  // }, [todos]);
+
+  const focusField = () => {
+    setTimeout(() => {
+      const inputField =
+        document.querySelector<HTMLInputElement>('.todoapp__new-todo');
+
+      inputField?.focus();
+    }, 0);
+  };
 
   const filterTodos = (filterType: string, todoList: Todo[]) => {
     switch (filterType) {
@@ -94,6 +101,7 @@ export const App: React.FC = () => {
       setTimeout(() => {
         getTodos();
       }, 300);
+      focusField();
       setIsLoading(false);
       setTodoTemp(null);
     }
@@ -113,6 +121,7 @@ export const App: React.FC = () => {
     } catch {
       setErrorMessage(ErrorMessage.Delete);
     } finally {
+      focusField();
       setTodoId(null);
     }
   };
@@ -122,11 +131,35 @@ export const App: React.FC = () => {
     try {
       const completedTodo = todos.filter(todo => todo.completed);
 
-      await Promise.all(completedTodo.map(todo => deleteTodo(todo.id)));
+      const deletedResults = await Promise.all(
+        completedTodo.map(async todo => {
+          try {
+            const response = await deleteTodo(todo.id);
 
-      setTodos(prevTodos => prevTodos.filter(todo => !todo.completed));
+            return { id: todo.id, success: response === 1 };
+          } catch {
+            return { id: todo.id, success: false };
+          }
+        }),
+      );
+
+      const successfullDeletedTodos = deletedResults
+        .filter(results => results.success)
+        .map(results => results.id);
+
+      setTodos(prevTodos =>
+        prevTodos.filter(todo => !successfullDeletedTodos.includes(todo.id)),
+      );
+
+      const hasFailsDeleted = deletedResults.some(result => !result.success);
+
+      if (hasFailsDeleted) {
+        setErrorMessage(ErrorMessage.Delete);
+      }
     } catch {
       setErrorMessage(ErrorMessage.Delete);
+    } finally {
+      focusField();
     }
   };
 
@@ -149,7 +182,6 @@ export const App: React.FC = () => {
             addTodo={addTodo}
             isLoading={isLoading}
             todos={todos}
-            inputRef={inputRef}
           />
           <section className="todoapp__main" data-cy="TodoList">
             <TodoList
@@ -157,7 +189,6 @@ export const App: React.FC = () => {
               deleteTodo={deleteTodoFunc}
               todoTemp={todoTemp}
               todoId={todoId}
-              inputRef={inputRef}
             />
           </section>
           {todos.length !== 0 && (
